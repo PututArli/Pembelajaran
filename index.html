@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belajar Kosakata - Match & Learn</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+}
+
+:root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-hover: #273549;
+    --border: #334155;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    
+    --blue: #3b82f6;
+    --blue-light: #60a5fa;
+    --green: #10b981;
+    --green-light: #34d399;
+    --red: #ef4444;
+    --red-light: #f87171;
+    --orange: #f59e0b;
+    
+    --trans: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --trans-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+nav {
+    width: 100%;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-btn {
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: var(--trans);
+    display: none;
+}
+
+.back-btn:hover {
+    color: var(--text);
+    border-color: var(--blue-light);
+    transform: translateX(-2px);
+}
+
+.nav-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.nav-badges {
+    display: flex;
+    gap: 8px;
+}
+
+.badge {
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.badge.pop {
+    transform: scale(1.2);
+}
+
+.badge span {
+    color: var(--text);
+    margin-left: 4px;
+}
+
+#badge-level {
+    display: none;
+}
+
+.screen {
+    width: 100%;
+    max-width: 900px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.screen.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.level-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.level-header h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.level-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.level-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    cursor: pointer;
+    text-align: center;
+    transition: var(--trans-bounce);
+    position: relative;
+}
+
+.level-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--level-color);
+    box-shadow: 0 12px 40px -10px var(--shadow-color);
+}
+
+.level-card .icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.level-card h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.level-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.level-card .tag {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #fff;
+    background: var(--level-color);
+}
+
+.lc-easy { --level-color: var(--green); --shadow-color: rgba(16, 185, 129, 0.3); }
+.lc-med  { --level-color: var(--orange); --shadow-color: rgba(245, 158, 11, 0.3); }
+.lc-hard { --level-color: var(--red);   --shadow-color: rgba(239, 68, 68, 0.3); }
+
+.game-hud {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.hud-item {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hud-icon {
+    font-size: 1.4rem;
+}
+
+.hud-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.hud-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.hud-value {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.hud-item.combo .hud-value {
+    color: var(--orange);
+}
+
+.hud-item.combo.active {
+    border-color: var(--orange);
+    background: rgba(245, 158, 11, 0.08);
+    animation: comboPulse 0.6s ease;
+}
+
+@keyframes comboPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+}
+
+.hud-item.timer .hud-value {
+    color: var(--blue-light);
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-section {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.progress-header .pct {
+    color: var(--blue-light);
+}
+
+.progress-bar-container {
+    height: 10px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--blue-light));
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.score-float {
+    position: absolute;
+    font-size: 1.1rem;
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 400;
+    animation: scoreRise 1.2s ease-out forwards;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.score-float.bonus { color: var(--orange); font-size: 0.85rem; }
+.score-float.points { color: var(--green-light); }
+.score-float.penalty { color: var(--red-light); }
+
+@keyframes scoreRise {
+    0% { opacity: 0; transform: translateY(10px) scale(0.7); }
+    20% { opacity: 1; transform: translateY(0) scale(1.15); }
+    70% { opacity: 1; transform: translateY(-30px); }
+    100% { opacity: 0; transform: translateY(-50px) scale(0.8); }
+}
+
+.stars-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.star {
+    font-size: 2.4rem;
+    opacity: 0.2;
+    transform: scale(0.6);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.star.earned {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.game-area {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 40px;
+    min-height: 500px;
+}
+
+.svg-layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: visible;
+}
+
+#perm-svg { z-index: 1; }
+#drag-svg { z-index: 50; }
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 46%;
+    z-index: 2;
+}
+
+.column-header {
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    padding-left: 4px;
+}
+
+.card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    user-select: none;
+    transition: var(--trans);
+    line-height: 1.4;
+}
+
+.left-col .card  { cursor: grab; text-align: center; justify-content: center; padding-right: 40px; }
+.right-col .card { cursor: default; text-align: left; padding-left: 40px; }
+.left-col .card:active { cursor: grabbing; }
+
+.card:hover:not(.matched) {
+    border-color: #475569;
+    transform: translateY(-2px);
+}
+
+.card.dragging { opacity: 0.5; border-color: var(--blue); background: rgba(59, 130, 246, 0.1); }
+.card.drop-target { border-color: var(--blue-light); background: rgba(59, 130, 246, 0.05); transform: scale(1.03); }
+.card.matched { border-color: var(--green); background: rgba(16, 185, 129, 0.1); color: var(--green-light); pointer-events: none; animation: bounce 0.4s var(--trans-bounce); }
+.card.fail { border-color: var(--red); background: rgba(239, 68, 68, 0.1); color: var(--red-light); animation: shake 0.4s; }
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background: var(--border);
+    border: 3px solid var(--surface);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: var(--trans);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.left-col .dot  { right: -7px; }
+.right-col .dot { left: -7px; }
+
+.card.dragging .dot, .card.drop-target .dot { background: var(--blue); }
+.card.matched .dot { background: var(--green); }
+.card.fail .dot    { background: var(--red); }
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.feedback-pop {
+    position: absolute;
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    pointer-events: none;
+    z-index: 300;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    animation: floatUp 1s ease-out forwards;
+}
+
+.feedback-pop.ok { background: var(--green); border: 2px solid #059669; }
+.feedback-pop.no { background: var(--red);   border: 2px solid #dc2626; }
+
+@keyframes floatUp {
+    0% { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.8); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.1); }
+    80% { opacity: 1; transform: translateX(-50%) translateY(-20px); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-35px) scale(0.9); }
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 25px 60px -12px rgba(0,0,0,0.6);
+    animation: slideUp 0.4s var(--trans-bounce);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content .emoji { font-size: 4rem; margin-bottom: 16px; }
+.modal-content h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 12px; }
+.modal-content p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 32px; }
+
+.stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 40px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value { font-size: 2rem; font-weight: 900; color: var(--blue-light); }
+.stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); letter-spacing: 0.05em; }
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 14px 28px;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: var(--trans);
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 8px 20px -6px rgba(59, 130, 246, 0.5);
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -6px rgba(59, 130, 246, 0.6);
+}
+
+.btn-secondary {
+    background: var(--surface-hover);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+    .game-area { flex-direction: column; gap: 60px; min-height: auto; }
+    .column { width: 100%; }
+    .left-col .dot { right: auto; left: 50%; bottom: -7px; top: auto; transform: translateX(-50%); }
+    .right-col .dot { left: 50%; top: -7px; transform: translateX(-50%); }
+    #perm-svg, #drag-svg { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <button id="back-btn" class="back-btn" onclick="UI.goHome()">← Ganti Level</button>
+        <span class="nav-title">📚 Kosakata</span>
+    </div>
+    <div class="nav-badges">
+        <div id="badge-level" class="badge">Level: <span id="lv-disp">-</span></div>
+        <div class="badge">Skor: <span id="score-disp">0</span></div>
+    </div>
+</nav>
+
+<main id="screen-level" class="screen active">
+    <div class="level-header">
+        <h1>Ready to Learn?</h1>
+        <p>Pilih tingkat kesulitan untuk memulai tantangan.</p>
+    </div>
+    <div class="level-grid">
+        <div class="level-card lc-easy" onclick="Game.start(1)">
+            <div class="icon">🌱</div>
+            <h2>Mudah</h2>
+            <p>Kata dasar yang sering ditemukan sehari-hari.</p>
+            <span class="tag">Level 1</span>
+        </div>
+        <div class="level-card lc-med" onclick="Game.start(2)">
+            <div class="icon">⚡</div>
+            <h2>Sedang</h2>
+            <p>Kosakata akademik dan bahasa formal populer.</p>
+            <span class="tag">Level 2</span>
+        </div>
+        <div class="level-card lc-hard" onclick="Game.start(3)">
+            <div class="icon">🔥</div>
+            <h2>Sulit</h2>
+            <p>Istilah sastra tinggi dan kata-kata arkais.</p>
+            <span class="tag">Level 3</span>
+        </div>
+    </div>
+</main>
+
+<main id="screen-game" class="screen">
+    <div class="game-hud">
+        <div class="hud-item timer">
+            <span class="hud-icon">⏱️</span>
+            <div class="hud-info">
+                <span class="hud-label">Waktu</span>
+                <span id="hud-timer" class="hud-value">00:00</span>
+            </div>
+        </div>
+        <div class="hud-item combo" id="hud-combo">
+            <span class="hud-icon">🔥</span>
+            <div class="hud-info">
+                <span class="hud-label">Combo</span>
+                <span id="hud-combo-val" class="hud-value">0x</span>
+            </div>
+        </div>
+    </div>
+    <section class="progress-section">
+        <div class="progress-header">
+            <span id="prog-label">0 / 8 Terjawab</span>
+            <span id="prog-pct" class="pct">0%</span>
+        </div>
+        <div class="progress-bar-container">
+            <div id="prog-fill" class="progress-bar-fill"></div>
+        </div>
+    </section>
+
+    <div id="game-area" class="game-area">
+        <svg id="perm-svg" class="svg-layer permanent"></svg>
+        <svg id="drag-svg" class="svg-layer">
+            <line id="live-line" x1="0" y1="0" x2="0" y2="0" 
+                  stroke="#60a5fa" stroke-width="3" stroke-dasharray="8 5" 
+                  stroke-linecap="round" opacity="0"/>
+        </svg>
+
+        <div id="col-left" class="column left-col">
+            <div class="column-header">Pilih Kata</div>
+        </div>
+        <div id="col-right" class="column right-col">
+            <div class="column-header">Cari Makna</div>
+        </div>
+    </div>
+</main>
+
+<div id="modal-finish" class="modal-overlay">
+    <div class="modal-content">
+        <div id="modal-emoji" class="emoji">🎉</div>
+        <h2 id="modal-title">Luar Biasa!</h2>
+        <p id="modal-msg">Kamu berhasil menyelesaikan semua tantangan.</p>
+        
+        <div id="stars-container" class="stars-row">
+            <span class="star" id="star-1">⭐</span>
+            <span class="star" id="star-2">⭐</span>
+            <span class="star" id="star-3">⭐</span>
+        </div>
+        <div class="stats-row">
+            <div class="stat-item">
+                <span id="stat-score" class="stat-value">0</span>
+                <span class="stat-label">Total Skor</span>
+            </div>
+            <div class="stat-item">
+                <span id="stat-acc" class="stat-value">0%</span>
+                <span class="stat-label">Akurasi</span>
+            </div>
+            <div class="stat-item">
+                <span id="stat-time" class="stat-value">00:00</span>
+                <span class="stat-label">Waktu</span>
+            </div>
+            <div class="stat-item">
+                <span id="stat-combo" class="stat-value">0x</span>
+                <span class="stat-label">Max Combo</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="UI.goHome()">Menu Utama</button>
+            <button class="btn btn-primary" onclick="Game.restart()">Main Lagi</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const DATA = {
+    LEVELS: {
+        1: {
+            name: 'Mudah',
+            words: [
+                { q: 'Indah', a: 'Cantik dan enak dipandang' },
+                { q: 'Gagah', a: 'Tampak kuat dan berwibawa' },
+                { q: 'Bijak', a: 'Pandai mengambil keputusan' },
+                { q: 'Damai', a: 'Tenang tanpa keributan' },
+                { q: 'Setia', a: 'Tidak berkhianat kepada siapapun' },
+                { q: 'Cermat', a: 'Teliti dan hati-hati dalam bekerja' },
+                { q: 'Tabah', a: 'Kuat menghadapi cobaan hidup' },
+                { q: 'Lincah', a: 'Gesit dan cepat bergerak' }
+            ]
+        },
+        2: {
+            name: 'Sedang',
+            words: [
+                { q: 'Arunika', a: 'Cahaya matahari saat terbit' },
+                { q: 'Lazuardi', a: 'Warna biru cerah seperti langit' },
+                { q: 'Renjana', a: 'Rasa hati yang sangat kuat' },
+                { q: 'Saujana', a: 'Sejauh mata memandang' },
+                { q: 'Mahardika', a: 'Merdeka dan bebas sepenuhnya' },
+                { q: 'Pesona', a: 'Daya tarik yang memukau' },
+                { q: 'Kirana', a: 'Cahaya yang indah bersinar' },
+                { q: 'Wicara', a: 'Kemampuan berbicara seseorang' }
+            ]
+        },
+        3: {
+            name: 'Sulit',
+            words: [
+                { q: 'Niskala', a: 'Abstrak atau tidak berwujud' },
+                { q: 'Amerta', a: 'Abadi atau tidak mati' },
+                { q: 'Jumantara', a: 'Langit atau angkasa raya' },
+                { q: 'Candala', a: 'Merasa diri paling rendah' },
+                { q: 'Pamomong', a: 'Pengasuh atau pembimbing' },
+                { q: 'Wahana', a: 'Sarana atau alat mencapai tujuan' },
+                { q: 'Gelegak', a: 'Bergolak dengan hebat' },
+                { q: 'Semburat', a: 'Warna yang memancar keluar' }
+            ]
+        }
+    }
+};
+
+const Game = {
+    currentLevel: 1,
+    score: 0,
+    matched: 0,
+    attempts: 0,
+    wrong: 0,
+    combo: 0,
+    maxCombo: 0,
+    timerInterval: null,
+    startTime: 0,
+    elapsed: 0,
+    draggingCard: null,
+    scrollParams: { active: false, speed: 0 },
+    mouse: { x: 0, y: 0 },
+
+    start(level) {
+        this.currentLevel = level;
+        this.resetState();
+        
+        UI.showScreen('game');
+        UI.updateHeader(DATA.LEVELS[level].name);
+        
+        this.buildBoard(DATA.LEVELS[level].words);
+        this.initDragAndDrop();
+        this.startTimer();
+    },
+
+    startTimer() {
+        this.startTime = Date.now();
+        clearInterval(this.timerInterval);
+        this.timerInterval = setInterval(() => {
+            this.elapsed = Date.now() - this.startTime;
+            const s = Math.floor(this.elapsed / 1000);
+            const m = Math.floor(s / 60);
+            const ss = String(s % 60).padStart(2, '0');
+            const mm = String(m).padStart(2, '0');
+            document.getElementById('hud-timer').textContent = `${mm}:${ss}`;
+        }, 200);
+    },
+
+    stopTimer() {
+        clearInterval(this.timerInterval);
+    },
+
+    getTimeString() {
+        const s = Math.floor(this.elapsed / 1000);
+        return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    },
+
+    restart() {
+        this.start(this.currentLevel);
+    },
+
+    resetState() {
+        this.score = 0;
+        this.matched = 0;
+        this.attempts = 0;
+        this.wrong = 0;
+        this.combo = 0;
+        this.maxCombo = 0;
+        this.elapsed = 0;
+        this.stopTimer();
+        document.getElementById('hud-timer').textContent = '00:00';
+        document.getElementById('hud-combo-val').textContent = '0x';
+        document.getElementById('hud-combo').classList.remove('active');
+        UI.clearBoard();
+        UI.updateUI();
+    },
+
+    buildBoard(words) {
+        const leftWords = [...words].sort(() => Math.random() - 0.5);
+        const rightWords = [...words].sort(() => Math.random() - 0.5);
+
+        const colLeft = document.getElementById('col-left');
+        const colRight = document.getElementById('col-right');
+
+        leftWords.forEach(w => this.createCard(w, 'left', colLeft));
+        rightWords.forEach(w => this.createCard(w, 'right', colRight));
+        
+        UI.resizeCanvas();
+    },
+
+    createCard(item, side, container) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.id = item.q;
+        card.innerHTML = `<span>${side === 'left' ? item.q : item.a}</span><div class="dot"></div>`;
+        container.appendChild(card);
+    },
+
+    initDragAndDrop() {
+        const leftCards = document.querySelectorAll('.left-col .card');
+        leftCards.forEach(card => {
+            card.addEventListener('mousedown', e => this.handleDragStart(e, card));
+            card.addEventListener('touchstart', e => this.handleDragStart(e, card), { passive: true });
+        });
+    },
+
+    handleDragStart(e, card) {
+        if (card.classList.contains('matched')) return;
+
+        this.draggingCard = card;
+        card.classList.add('dragging');
+
+        const dot = card.querySelector('.dot').getBoundingClientRect();
+        const area = UI.gameArea.getBoundingClientRect();
+        
+        const startX = dot.left + dot.width / 2 - area.left;
+        const startY = dot.top + dot.height / 2 - area.top;
+
+        UI.liveLine.setAttribute('x1', startX);
+        UI.liveLine.setAttribute('y1', startY);
+        UI.liveLine.setAttribute('x2', startX);
+        UI.liveLine.setAttribute('y2', startY);
+        UI.liveLine.setAttribute('opacity', '1');
+
+        this.mouse.x = e.touches ? e.touches[0].clientX : e.clientX;
+        this.mouse.y = e.touches ? e.touches[0].clientY : e.clientY;
+
+        this._onMove = this.handleDragMove.bind(this);
+        this._onEnd = this.handleDragEnd.bind(this);
+
+        document.addEventListener('mousemove', this._onMove);
+        document.addEventListener('mouseup', this._onEnd);
+        document.addEventListener('touchmove', this._onMove, { passive: false });
+        document.addEventListener('touchend', this._onEnd);
+
+        this.scrollParams.active = false;
+        requestAnimationFrame(() => this.processAutoScroll());
+    },
+
+    handleDragMove(e) {
+        if (!this.draggingCard) return;
+        e.preventDefault?.();
+
+        this.mouse.x = e.touches ? e.touches[0].clientX : e.clientX;
+        this.mouse.y = e.touches ? e.touches[0].clientY : e.clientY;
+
+        this.updateEdgeScrollStatus(this.mouse.y);
+        this.refreshDragLine();
+    },
+
+    handleDragEnd(e) {
+        if (!this.draggingCard) return;
+
+        const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+        UI.liveLine.setAttribute('opacity', '0');
+        this.draggingCard.classList.remove('dragging');
+        
+        document.querySelectorAll('.right-col .card').forEach(c => c.classList.remove('drop-target'));
+
+        const target = this.getCardAt(endX, endY);
+        if (target && !target.classList.contains('matched')) {
+            this.checkMatch(this.draggingCard, target);
+        }
+
+        this.draggingCard = null;
+        this.scrollParams.active = false;
+
+        document.removeEventListener('mousemove', this._onMove);
+        document.removeEventListener('mouseup', this._onEnd);
+        document.removeEventListener('touchmove', this._onMove);
+        document.removeEventListener('touchend', this._onEnd);
+    },
+
+    refreshDragLine() {
+        const area = UI.gameArea.getBoundingClientRect();
+        UI.liveLine.setAttribute('x2', this.mouse.x - area.left);
+        UI.liveLine.setAttribute('y2', this.mouse.y - area.top);
+
+        document.querySelectorAll('.right-col .card').forEach(c => c.classList.remove('drop-target'));
+        const target = this.getCardAt(this.mouse.x, this.mouse.y);
+        if (target && !target.classList.contains('matched')) target.classList.add('drop-target');
+    },
+
+    getCardAt(x, y) {
+        const el = document.elementFromPoint(x, y);
+        return el?.closest('.right-col .card') || null;
+    },
+
+    updateEdgeScrollStatus(y) {
+        const margin = 80;
+        const speedLimit = 15;
+        const h = window.innerHeight;
+
+        if (y < margin) {
+            this.scrollParams.active = true;
+            this.scrollParams.speed = -speedLimit * (1 - Math.max(0, y) / margin);
+        } else if (y > h - margin) {
+            this.scrollParams.active = true;
+            this.scrollParams.speed = speedLimit * (1 - Math.max(0, h - y) / margin);
+        } else {
+            this.scrollParams.active = false;
+        }
+    },
+
+    processAutoScroll() {
+        if (this.draggingCard && this.scrollParams.active) {
+            window.scrollBy(0, this.scrollParams.speed);
+            this.refreshDragLine();
+        }
+        if (this.draggingCard) requestAnimationFrame(() => this.processAutoScroll());
+    },
+
+    checkMatch(lCard, rCard) {
+        this.attempts++;
+        const area = UI.gameArea.getBoundingClientRect();
+        const lBox = lCard.getBoundingClientRect();
+        const rBox = rCard.getBoundingClientRect();
+        const yPos = ((lBox.top + rBox.top) / 2) - area.top + lBox.height / 2;
+
+        if (lCard.dataset.id === rCard.dataset.id) {
+            this.handleSuccess(lCard, rCard, yPos);
+        } else {
+            this.handleFailure(lCard, rCard, yPos);
+        }
+    },
+
+    handleSuccess(l, r, y) {
+        l.classList.add('matched');
+        r.classList.add('matched');
+        UI.drawPermanentLine(l, r);
+
+        this.combo++;
+        if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+
+        const basePoints = 100;
+        const comboBonus = Math.min(this.combo - 1, 5) * 20;
+        const speedBonus = Math.max(0, 50 - Math.floor(this.elapsed / 1000 / DATA.LEVELS[this.currentLevel].words.length) * 5);
+        const totalPoints = basePoints + comboBonus + speedBonus;
+
+        this.score += totalPoints;
+        this.matched++;
+
+        UI.showFeedback(true, y);
+        UI.showScoreFloat(totalPoints, comboBonus, y);
+        UI.updateComboHUD(this.combo);
+        UI.animateBadge();
+        UI.updateUI();
+
+        if (this.matched === DATA.LEVELS[this.currentLevel].words.length) {
+            this.stopTimer();
+            setTimeout(() => UI.showFinishModal(), 800);
+        }
+    },
+
+    handleFailure(l, r, y) {
+        this.wrong++;
+        this.combo = 0;
+        l.classList.add('fail');
+        r.classList.add('fail');
+        UI.showFeedback(false, y);
+        UI.updateComboHUD(0);
+
+        const penalty = -25;
+        this.score = Math.max(0, this.score + penalty);
+        UI.showScoreFloat(penalty, 0, y);
+        UI.animateBadge();
+        UI.updateUI();
+
+        setTimeout(() => {
+            l.classList.remove('fail');
+            r.classList.remove('fail');
+            this.swapIncorrectPair(r);
+        }, 480);
+    },
+
+    swapIncorrectPair(card) {
+        const pool = Array.from(document.querySelectorAll('.right-col .card:not(.matched)'))
+                          .filter(c => c !== card);
+        if (pool.length === 0) return;
+
+        const target = pool[Math.floor(Math.random() * pool.length)];
+        
+        const tempId = card.dataset.id;
+        const tempTxt = card.querySelector('span').textContent;
+
+        card.style.opacity = '0';
+        target.style.opacity = '0';
+
+        setTimeout(() => {
+            card.dataset.id = target.dataset.id;
+            card.querySelector('span').textContent = target.querySelector('span').textContent;
+            
+            target.dataset.id = tempId;
+            target.querySelector('span').textContent = tempTxt;
+            
+            card.style.opacity = '1';
+            target.style.opacity = '1';
+        }, 250);
+    }
+};
+
+const UI = {
+    gameArea: document.getElementById('game-area'),
+    permSvg: document.getElementById('perm-svg'),
+    liveLine: document.getElementById('live-line'),
+
+    showScreen(name) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${name}`).classList.add('active');
+        
+        const isHome = name === 'level';
+        document.getElementById('back-btn').style.display = isHome ? 'none' : 'flex';
+        document.getElementById('badge-level').style.display = isHome ? 'none' : 'flex';
+    },
+
+    goHome() {
+        document.getElementById('modal-finish').style.display = 'none';
+        this.showScreen('level');
+    },
+
+    updateHeader(lvName) {
+        document.getElementById('lv-disp').textContent = lvName;
+    },
+
+    clearBoard() {
+        document.getElementById('col-left').innerHTML = '<div class="column-header">Pilih Kata</div>';
+        document.getElementById('col-right').innerHTML = '<div class="column-header">Cari Makna</div>';
+        this.permSvg.innerHTML = '';
+    },
+
+    updateUI() {
+        const count = DATA.LEVELS[Game.currentLevel].words.length;
+        const pct = Math.round((Game.matched / count) * 100);
+        
+        document.getElementById('score-disp').textContent = Game.score;
+        document.getElementById('prog-label').textContent = `${Game.matched} / ${count} Terjawab`;
+        document.getElementById('prog-pct').textContent = `${pct}%`;
+        document.getElementById('prog-fill').style.width = `${pct}%`;
+    },
+
+    drawPermanentLine(el1, el2, animate = true) {
+        const area = this.permSvg.getBoundingClientRect();
+        const d1 = el1.querySelector('.dot').getBoundingClientRect();
+        const d2 = el2.querySelector('.dot').getBoundingClientRect();
+        
+        const x1 = d1.left + d1.width / 2 - area.left;
+        const y1 = d1.top + d1.height / 2 - area.top;
+        const x2 = d2.left + d2.width / 2 - area.left;
+        const y2 = d2.top + d2.height / 2 - area.top;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+        line.setAttribute('stroke', '#10b981');
+        line.setAttribute('stroke-width', '3');
+        line.setAttribute('stroke-linecap', 'round');
+
+        if (animate) {
+            const len = Math.hypot(x2 - x1, y2 - y1);
+            line.style.strokeDasharray = len;
+            line.style.strokeDashoffset = len;
+            line.style.transition = 'stroke-dashoffset 0.4s ease-out';
+            this.permSvg.appendChild(line);
+            requestAnimationFrame(() => line.style.strokeDashoffset = '0');
+        } else {
+            this.permSvg.appendChild(line);
+        }
+    },
+
+    showFeedback(ok, y) {
+        const pop = document.createElement('div');
+        pop.className = `feedback-pop ${ok ? 'ok' : 'no'}`;
+        const msgs = ok
+            ? ['✅ Mantap!', '✅ Keren!', '✅ Tepat!', '✅ Hebat!', '✅ Luar Biasa!']
+            : ['❌ Tertukar!', '❌ Coba lagi!', '❌ Hampir!'];
+        pop.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+        if (ok && Game.combo >= 3) pop.textContent = `🔥 ${Game.combo}x Combo!`;
+        pop.style.top = `${y}px`;
+        this.gameArea.appendChild(pop);
+        setTimeout(() => pop.remove(), 1000);
+    },
+
+    showScoreFloat(points, comboBonus, y) {
+        const el = document.createElement('div');
+        el.className = `score-float ${points > 0 ? 'points' : 'penalty'}`;
+        el.textContent = points > 0 ? `+${points}` : `${points}`;
+        el.style.top = `${y - 30}px`;
+        el.style.left = '50%';
+        el.style.transform = 'translateX(-50%)';
+        this.gameArea.appendChild(el);
+        setTimeout(() => el.remove(), 1300);
+
+        if (comboBonus > 0) {
+            setTimeout(() => {
+                const b = document.createElement('div');
+                b.className = 'score-float bonus';
+                b.textContent = `+${comboBonus} combo`;
+                b.style.top = `${y - 10}px`;
+                b.style.left = '50%';
+                b.style.transform = 'translateX(-50%)';
+                this.gameArea.appendChild(b);
+                setTimeout(() => b.remove(), 1300);
+            }, 200);
+        }
+    },
+
+    updateComboHUD(combo) {
+        const el = document.getElementById('hud-combo');
+        document.getElementById('hud-combo-val').textContent = `${combo}x`;
+        if (combo >= 2) {
+            el.classList.add('active');
+            el.style.animation = 'none';
+            el.offsetHeight;
+            el.style.animation = '';
+        } else {
+            el.classList.remove('active');
+        }
+    },
+
+    animateBadge() {
+        const badge = document.querySelector('.badge:last-child');
+        badge.classList.add('pop');
+        setTimeout(() => badge.classList.remove('pop'), 300);
+    },
+
+    resizeCanvas() {
+        const w = this.gameArea.offsetWidth;
+        const h = this.gameArea.offsetHeight;
+        this.permSvg.setAttribute('width', w);
+        this.permSvg.setAttribute('height', h);
+        document.getElementById('drag-svg').setAttribute('width', w);
+        document.getElementById('drag-svg').setAttribute('height', h);
+        this.redrawAllLines();
+    },
+
+    redrawAllLines() {
+        this.permSvg.innerHTML = '';
+        document.querySelectorAll('.left-col .card.matched').forEach(lc => {
+            const rc = document.querySelector(`.right-col .card.matched[data-id="${lc.dataset.id}"]`);
+            if (rc) this.drawPermanentLine(lc, rc, false);
+        });
+    },
+
+    showFinishModal() {
+        const acc = Game.attempts ? Math.round((Game.matched / Game.attempts) * 100) : 100;
+        
+        document.getElementById('stat-score').textContent = Game.score;
+        document.getElementById('stat-acc').textContent = `${acc}%`;
+        document.getElementById('stat-time').textContent = Game.getTimeString();
+        document.getElementById('stat-combo').textContent = `${Game.maxCombo}x`;
+        
+        const title = document.getElementById('modal-title');
+        const emoji = document.getElementById('modal-emoji');
+        const msg = document.getElementById('modal-msg');
+
+        let starCount = 1;
+        if (acc === 100) starCount = 3;
+        else if (acc >= 75) starCount = 2;
+
+        document.querySelectorAll('.star').forEach(s => s.classList.remove('earned'));
+        for (let i = 1; i <= starCount; i++) {
+            setTimeout(() => {
+                document.getElementById(`star-${i}`).classList.add('earned');
+            }, i * 300);
+        }
+
+        if (acc === 100) {
+            title.textContent = "Sempurna!";
+            emoji.textContent = "👑";
+            msg.textContent = "Luar biasa, kamu jenius kosakata!";
+        } else if (acc >= 75) {
+            title.textContent = "Hebat!";
+            emoji.textContent = "🌟";
+            msg.textContent = "Hampir sempurna, pertahankan!";
+        } else {
+            title.textContent = "Selesai!";
+            emoji.textContent = "💪";
+            msg.textContent = "Terus berlatih untuk hasil maksimal.";
+        }
+
+        document.getElementById('modal-finish').style.display = 'flex';
+    }
+};
+
+window.addEventListener('resize', () => UI.resizeCanvas());
+</script>
+</body>
+</html>
